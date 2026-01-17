@@ -10,6 +10,7 @@ import com.ecommerce_backend.exception.DuplicateResourceException;
 import com.ecommerce_backend.exception.ResourceNotFoundException;
 import com.ecommerce_backend.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,11 +21,18 @@ public class UserService {
 
     private UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
 
 
     }
+
+
+    private PasswordEncoder passwordEncoder;
+
+
+
 
     public UserResponseDTO userRegisterUser(UserRequestDTO dto) {
 
@@ -35,6 +43,10 @@ public class UserService {
         User user= new User();
         BeanUtils.copyProperties(dto, user);
         user.setRole(Role.USER);
+
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+
+
         User savedUser=  userRepository.save(user);
 
         UserResponseDTO response = new UserResponseDTO();

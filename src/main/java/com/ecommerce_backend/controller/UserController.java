@@ -4,10 +4,14 @@ package com.ecommerce_backend.controller;
 import com.ecommerce_backend.dto.*;
 
 
+import com.ecommerce_backend.entity.User;
+import com.ecommerce_backend.repository.UserRepository;
 import com.ecommerce_backend.service.UserService;
 import org.springframework.http.HttpStatus;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -20,9 +24,15 @@ public class UserController {
 
 
     private UserService userService;
+    private AuthenticationManager authenticationManager;
+    private UserRepository userRepository;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService , AuthenticationManager authenticationManager , UserRepository userRepository) {
+
+
         this.userService = userService;
+        this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
     }
 
     @PostMapping("/register")
@@ -47,14 +57,36 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<APIResponse<LoginResponseDTO>> loginUser(@RequestBody LoginRequestDTO dto) {
 
-       LoginResponseDTO logindto = userService.loginUser(dto);
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        dto.getEmail(),
+                        dto.getPassword()
+                )
+        );
+
+
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 3️⃣ Build response
+        LoginResponseDTO responseDto = new LoginResponseDTO();
+        responseDto.setId(user.getId());
+        responseDto.setUsername(user.getUsername());
+        responseDto.setEmail(user.getEmail());
+        responseDto.setRole(user.getRole().name());
+        responseDto.setMessage("Login successful");
+
         APIResponse<LoginResponseDTO> apiResponse = new APIResponse<>();
         apiResponse.setSuccess(true);
-        apiResponse.setMessage("Login successfully");
-        apiResponse.setData(logindto);
-        return ResponseEntity.ok(apiResponse);
+        apiResponse.setMessage("Login successful");
+        apiResponse.setData(responseDto);
 
+        return ResponseEntity.ok(apiResponse);
     }
+
+
+
+
     @GetMapping("/{id}")
     public  ResponseEntity<APIResponse<UserResponseDTO>>getUserByid(@PathVariable Long id) {
         UserResponseDTO dto=userService.getUserById(id);
