@@ -10,6 +10,8 @@ import com.ecommerce_backend.exception.DuplicateResourceException;
 import com.ecommerce_backend.exception.ResourceNotFoundException;
 import com.ecommerce_backend.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,13 +23,14 @@ public class UserService {
 
     private UserRepository userRepository;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
 
 
     }
-
+    private AuthenticationManager authenticationManager;
 
     private PasswordEncoder passwordEncoder;
 
@@ -41,7 +44,9 @@ public class UserService {
         }
 
         User user= new User();
+
         BeanUtils.copyProperties(dto, user);
+
         user.setRole(Role.USER);
 
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
@@ -59,20 +64,26 @@ public class UserService {
 
    public LoginResponseDTO loginUser(LoginRequestDTO dto) {
 
+       authenticationManager.authenticate(
+               new UsernamePasswordAuthenticationToken(
+                       dto.getEmail(),
+                       dto.getPassword()
+               )
+       );
+
+
        User user = userRepository.findByEmail(dto.getEmail())
-               .orElseThrow(() -> new ResourceNotFoundException("Invalid email "));
+               .orElseThrow(() -> new RuntimeException("User not found"));
 
-       if(!user.getPassword().equals(dto.getPassword())) {
-           throw new ResourceNotFoundException("Invalid password");
-       }
 
-     LoginResponseDTO response = new LoginResponseDTO();
-
-      BeanUtils.copyProperties(user,response);
+       LoginResponseDTO response = new LoginResponseDTO();
+       response.setId(user.getId());
+       response.setUsername(user.getUsername());
+       response.setEmail(user.getEmail());
+       response.setRole(user.getRole().name());
+       response.setMessage("Login successful");
 
        return response;
-
-
    }
 
    public UserResponseDTO getUserById(Long id) {

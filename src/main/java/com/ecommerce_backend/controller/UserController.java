@@ -7,6 +7,7 @@ import com.ecommerce_backend.dto.*;
 import com.ecommerce_backend.entity.User;
 import com.ecommerce_backend.repository.UserRepository;
 import com.ecommerce_backend.service.UserService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 
 import org.springframework.http.ResponseEntity;
@@ -36,45 +37,31 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<APIResponse<?>> register(
+    public ResponseEntity<APIResponse<UserResponseDTO>> register(
             @RequestBody UserRequestDTO dto) {
+
+
 
         UserResponseDTO response = userService.userRegisterUser(dto);
 
         APIResponse<UserResponseDTO> apiResponse = new APIResponse<>();
-        apiResponse.setSuccess(true);
-        apiResponse.setMessage("User registered successfully");
-        apiResponse.setData(response);
+
+       apiResponse.setSuccess(true);
+      apiResponse.setMessage("User registered successfully");
+       apiResponse.setData(response);
 
 
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(apiResponse);
+       return ResponseEntity
+               .status(HttpStatus.CREATED)
+               .body(apiResponse);
     }
 
 
     @PostMapping("/login")
     public ResponseEntity<APIResponse<LoginResponseDTO>> loginUser(@RequestBody LoginRequestDTO dto) {
 
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        dto.getEmail(),
-                        dto.getPassword()
-                )
-        );
-
-
-        User user = userRepository.findByEmail(dto.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // 3️⃣ Build response
-        LoginResponseDTO responseDto = new LoginResponseDTO();
-        responseDto.setId(user.getId());
-        responseDto.setUsername(user.getUsername());
-        responseDto.setEmail(user.getEmail());
-        responseDto.setRole(user.getRole().name());
-        responseDto.setMessage("Login successful");
+        LoginResponseDTO responseDto = userService.loginUser(dto);
 
         APIResponse<LoginResponseDTO> apiResponse = new APIResponse<>();
         apiResponse.setSuccess(true);
