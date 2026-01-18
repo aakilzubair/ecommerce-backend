@@ -22,6 +22,8 @@ import java.util.List;
 public class UserService {
 
     private UserRepository userRepository;
+    private AuthenticationManager authenticationManager;
+    private PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
@@ -30,9 +32,7 @@ public class UserService {
 
 
     }
-    private AuthenticationManager authenticationManager;
 
-    private PasswordEncoder passwordEncoder;
 
 
 
