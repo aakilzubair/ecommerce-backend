@@ -9,6 +9,7 @@ import com.ecommerce_backend.entity.User;
 import com.ecommerce_backend.exception.DuplicateResourceException;
 import com.ecommerce_backend.exception.ResourceNotFoundException;
 import com.ecommerce_backend.repository.UserRepository;
+import com.ecommerce_backend.security.JwtService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -74,6 +75,12 @@ public class UserService {
 
        User user = userRepository.findByEmail(dto.getEmail())
                .orElseThrow(() -> new RuntimeException("User not found"));
+
+
+       String token = JwtService.generateToken(
+               user.getEmail(),
+               user.getRole().name()
+       );
 
 
        LoginResponseDTO response = new LoginResponseDTO();
