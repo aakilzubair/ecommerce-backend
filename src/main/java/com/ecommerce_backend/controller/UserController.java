@@ -7,6 +7,7 @@ import com.ecommerce_backend.dto.*;
 import com.ecommerce_backend.entity.User;
 import com.ecommerce_backend.repository.UserRepository;
 import com.ecommerce_backend.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 
@@ -37,7 +38,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<APIResponse<UserResponseDTO>> register(
+    public ResponseEntity<APIResponse<UserResponseDTO>> register(@Valid
             @RequestBody UserRequestDTO dto) {
 
 
@@ -59,7 +60,7 @@ public class UserController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<APIResponse<LoginResponseDTO>> loginUser(@RequestBody LoginRequestDTO dto) {
+    public ResponseEntity<APIResponse<LoginResponseDTO>> loginUser( @Valid @RequestBody LoginRequestDTO dto) {
 
         LoginResponseDTO responseDto = userService.loginUser(dto);
 
@@ -113,6 +114,22 @@ public class UserController {
 
         return ResponseEntity.ok(response);
     }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<APIResponse<UserResponseDTO>> updateUser(
+            @PathVariable Long id,
+           @Valid @RequestBody UserRequestDTO dto
+    ) {
+        UserResponseDTO updatedUser = userService.updateUser(id, dto);
+
+        APIResponse<UserResponseDTO> response = new APIResponse<>();
+        response.setSuccess(true);
+        response.setMessage("User updated successfully");
+        response.setData(updatedUser);
+
+        return ResponseEntity.ok(response);
+    }
+
 
 
 

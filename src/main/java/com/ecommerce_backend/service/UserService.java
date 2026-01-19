@@ -25,11 +25,13 @@ public class UserService {
     private UserRepository userRepository;
     private AuthenticationManager authenticationManager;
     private PasswordEncoder passwordEncoder;
+    private JwtService jwtService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager , JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
 
 
     }
@@ -77,10 +79,11 @@ public class UserService {
                .orElseThrow(() -> new RuntimeException("User not found"));
 
 
-       String token = JwtService.generateToken(
+       String token = jwtService.generateToken(
                user.getEmail(),
                user.getRole().name()
        );
+
 
 
        LoginResponseDTO response = new LoginResponseDTO();
@@ -89,6 +92,7 @@ public class UserService {
        response.setEmail(user.getEmail());
        response.setRole(user.getRole().name());
        response.setMessage("Login successful");
+       response.setToken(token);
 
        return response;
    }
@@ -128,6 +132,31 @@ public class UserService {
 
         userRepository.delete(user);
     }
+
+    public UserResponseDTO updateUser(Long id, UserRequestDTO dto) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (dto.getUsername() != null) {
+            user.setUsername(dto.getUsername());
+        }
+
+        if (dto.getEmail() != null) {
+            user.setEmail(dto.getEmail());
+        }
+
+        User savedUser = userRepository.save(user);
+
+        UserResponseDTO response = new UserResponseDTO();
+        response.setUsername(savedUser.getUsername());
+        response.setEmail(savedUser.getEmail());
+        response.setRole(savedUser.getRole());  // ✅ CORRECT
+
+
+        return response;
+    }
+
 
 
 

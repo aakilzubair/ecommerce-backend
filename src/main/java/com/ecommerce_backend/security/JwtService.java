@@ -2,9 +2,10 @@ package com.ecommerce_backend.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
-
+@Service
 public class JwtService {
 
     private static final String SECRET_KEY = "my-super-secret-key";
@@ -12,7 +13,7 @@ public class JwtService {
 
 
 
-    public static String generateToken(String username, String role) {
+    public  String generateToken(String username, String role) {
         return JWT.create()
                 .withSubject(username)
                 .withClaim("role", role)
@@ -29,11 +30,6 @@ public class JwtService {
                 .getSubject();
     }
 
-    public String extractUsername(String token) {
-        return JWT.require(Algorithm.HMAC256(SECRET_KEY))
-                .build()
-                .verify(token)
-                .getSubject();
-    }
+
 
 }
