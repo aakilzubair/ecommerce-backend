@@ -31,30 +31,20 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
 
-                        // ✅ Public APIs
-                        .requestMatchers(
-                                "/api/v1/user/register",
-                                "/api/v1/user/login"
-                        ).permitAll()
+                        //  Public APIs
+                        .requestMatchers("/api/v1/user/register", "/api/v1/user/login").permitAll()
 
-                        // ✅ USER + ADMIN
+                        // ADMIN only
                         .requestMatchers(
                                 "/api/v1/user/list",
-                                "/api/v1/user/{id}"
-                        ).hasAnyRole("USER", "ADMIN")
+                                "/api/v1/user/delete/**",
+                                "/api/v1/category/**",
+                                "/api/v1/products/add"
+                        ).hasRole("ADMIN")
 
-
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/user/delete/**")
-                        .hasAnyRole("USER", "ADMIN")
-
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/user/update/**")
-                        .hasAnyRole("USER", "ADMIN")
-
-
-
-                        // 🔐 ADMIN ONLY
-                     //   .requestMatchers("/api/v1/user/delete/**")
-                    //    .hasRole("ADMIN")
+                        // USER + ADMIN (with logic)
+                        .requestMatchers("/api/v1/user/update/**").hasAnyRole("USER","ADMIN")
+                        .requestMatchers("/api/v1/user/{id}").hasAnyRole("USER","ADMIN")
 
                         .anyRequest().authenticated()
                 )

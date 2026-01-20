@@ -36,9 +36,12 @@ public class ProductService {
                  );
          Product product = new Product();
          BeanUtils.copyProperties(dto, product);
+         product.setCategory(category);
+
          Product saved = productRepository.save(product);
          ProductResponseDTO productResponseDTO = new ProductResponseDTO();
          BeanUtils.copyProperties(saved, productResponseDTO);
+         productResponseDTO.setCategoryName(saved.getCategory().getName());
          return productResponseDTO;
 
 
@@ -58,10 +61,11 @@ public class ProductService {
         for (Product product : products) {
             ProductResponseDTO dto = new ProductResponseDTO();
             BeanUtils.copyProperties(product, dto);
-            // optional
-            // dto.setCategoryName(product.getCategory().getName());
+
+             dto.setCategoryName(product.getCategory().getName());
             response.add(dto);
         }
+
 
         return response; // can be empty
     }
