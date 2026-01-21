@@ -12,6 +12,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +37,7 @@ public class UserController {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
     }
-
+    @PreAuthorize("hasRole('USER')")
     @PostMapping("/register")
     public ResponseEntity<APIResponse<UserResponseDTO>> register(@Valid
             @RequestBody UserRequestDTO dto) {
@@ -58,7 +59,7 @@ public class UserController {
                .body(apiResponse);
     }
 
-
+    @PreAuthorize("hasRole('USER')")
     @PostMapping("/login")
     public ResponseEntity<APIResponse<LoginResponseDTO>> loginUser( @Valid @RequestBody LoginRequestDTO dto) {
 
@@ -74,7 +75,7 @@ public class UserController {
 
 
 
-
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @GetMapping("/{id}")
     public  ResponseEntity<APIResponse<UserResponseDTO>>getUserByid(@PathVariable Long id) {
         UserResponseDTO dto=userService.getUserById(id);

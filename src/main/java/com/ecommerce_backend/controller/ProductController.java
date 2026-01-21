@@ -8,6 +8,7 @@ import com.ecommerce_backend.dto.ProductResponseDTO;
 import com.ecommerce_backend.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public class ProductController {
         this.productService = productService;
 
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add")
     public ResponseEntity<APIResponse<ProductResponseDTO>> addProduct(
             @RequestBody ProductRequestDTO productRequestDTO) {
