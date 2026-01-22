@@ -5,6 +5,8 @@ import com.ecommerce_backend.dto.PlaceOrderRequestDTO;
 import com.ecommerce_backend.entity.*;
 import com.ecommerce_backend.exception.ResourceNotFoundException;
 import com.ecommerce_backend.repository.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -31,12 +33,17 @@ public class OrderService {
         this.userRepository = userRepository;
     }
 
-    public OrderResponseDTO placeOrder(PlaceOrderRequestDTO dto) {
+    public OrderResponseDTO placeOrder(
+            String email,
+            PlaceOrderRequestDTO dto
+    ) {
 
-        User user = userRepository.findById(dto.getUserId())
+        // 1️⃣ User by EMAIL (JWT)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("User not found"));
 
+        // 2️⃣ Cart by user
         Cart cart = cartRepository.findByUserId(user.getId())
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Cart not found"));
@@ -48,16 +55,23 @@ public class OrderService {
             throw new RuntimeException("Cart is empty");
         }
 
-        // 1️⃣ Create Order
+        // 3️⃣ Create Order
         Order order = new Order();
         order.setUser(user);
         order.setTotalAmount(cart.getTotalPrice());
         order.setStatus(OrderStatus.CREATED);
         order.setCreatedAt(LocalDateTime.now());
 
+        // 🔮 Future use
+//        if (dto != null) {
+//            order.setPaymentMethod(dto.getPaymentMethod());
+//            order.setCouponCode(dto.getCouponCode());
+//            // addressId → later
+//        }
+
         Order savedOrder = orderRepository.save(order);
 
-        // 2️⃣ Create OrderItems
+        // 4️⃣ Order Items
         for (CartItem item : cartItems) {
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(savedOrder);
@@ -67,12 +81,12 @@ public class OrderService {
             orderItemRepository.save(orderItem);
         }
 
-        // 3️⃣ Clear cart
+        // 5️⃣ Clear cart
         cartItemRepository.deleteAll(cartItems);
         cart.setTotalPrice(0.0);
         cartRepository.save(cart);
 
-        // 4️⃣ Response
+        // 6️⃣ Response
         OrderResponseDTO response = new OrderResponseDTO();
         response.setOrderId(savedOrder.getId());
         response.setTotalAmount(savedOrder.getTotalAmount());

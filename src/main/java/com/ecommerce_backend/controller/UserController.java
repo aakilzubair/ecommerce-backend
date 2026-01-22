@@ -37,12 +37,10 @@ public class UserController {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
     }
-    @PreAuthorize("hasRole('USER')")
+
     @PostMapping("/register")
     public ResponseEntity<APIResponse<UserResponseDTO>> register(@Valid
             @RequestBody UserRequestDTO dto) {
-
-
 
         UserResponseDTO response = userService.userRegisterUser(dto);
 
@@ -59,7 +57,7 @@ public class UserController {
                .body(apiResponse);
     }
 
-    @PreAuthorize("hasRole('USER')")
+
     @PostMapping("/login")
     public ResponseEntity<APIResponse<LoginResponseDTO>> loginUser( @Valid @RequestBody LoginRequestDTO dto) {
 
@@ -88,6 +86,7 @@ public class UserController {
 
 
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/list")
     public ResponseEntity<APIResponse<List<UserResponseDTO>>> getAllUsers() {
 
@@ -102,7 +101,7 @@ public class UserController {
     }
 
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<APIResponse<Void>> deleteUser(@PathVariable Long id) {
 
@@ -116,6 +115,8 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @PutMapping("/update/{id}")
     public ResponseEntity<APIResponse<UserResponseDTO>> updateUser(
             @PathVariable Long id,

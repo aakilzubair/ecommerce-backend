@@ -35,9 +35,9 @@ public class CartService {
         this.userRepository = userRepository;
         this.productRepository = productRepository;
     }
-    public CartResponseDTO addToCart(CartRequestDTO dto) {
+    public CartResponseDTO addToCart(String email, CartRequestDTO dto) {
 
-        User user = userRepository.findById(dto.getUserId())
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Product product = productRepository.findById(dto.getProductId())
@@ -79,7 +79,7 @@ public class CartService {
         cart.setTotalPrice(total);
         cartRepository.save(cart);
 
-        // 5️⃣ Response DTO
+        // 5️⃣ Response
         CartResponseDTO response = new CartResponseDTO();
         response.setCartId(cart.getId());
         response.setTotalPrice(cart.getTotalPrice());

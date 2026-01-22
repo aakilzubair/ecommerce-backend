@@ -4,6 +4,9 @@ import com.ecommerce_backend.dto.*;
 import com.ecommerce_backend.service.CartService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,12 +21,19 @@ public class CartController {
         this.cartService = cartService;
     }
 
+
+    @PreAuthorize("hasRole('USER')")
     @PostMapping("/add")
     public ResponseEntity<APIResponse<CartResponseDTO>> addToCart(
             @RequestBody CartRequestDTO cartRequestDTO) {
 
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String email = authentication.getName(); // JWT subject
+
         CartResponseDTO cartResponse =
-                cartService.addToCart(cartRequestDTO);
+                cartService.addToCart(email, cartRequestDTO);
 
         APIResponse<CartResponseDTO> response = new APIResponse<>();
         response.setSuccess(true);

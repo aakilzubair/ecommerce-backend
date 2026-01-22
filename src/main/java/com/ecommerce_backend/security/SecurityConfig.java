@@ -35,7 +35,17 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
                         //  Public APIs
-                        .requestMatchers("/api/v1/user/register", "/api/v1/user/login").permitAll()
+                        .requestMatchers("/api/v1/user/register",
+                                "/api/v1/user/login",
+                                "/api/v1/products/**"
+                        )
+                        .permitAll()
+
+                        .requestMatchers("/api/v1/orders/**",
+                                "/api/v1/cart/**"
+
+                        )
+                        .hasRole("USER")
 
                         // ADMIN only
                         .requestMatchers(
@@ -43,6 +53,7 @@ public class SecurityConfig {
                                 "/api/v1/user/delete/**",
                                 "/api/v1/category/**",
                                 "/api/v1/products/add"
+
                         ).hasRole("ADMIN")
 
                         // USER + ADMIN (with logic)

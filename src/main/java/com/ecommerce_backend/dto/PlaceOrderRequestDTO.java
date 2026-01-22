@@ -1,14 +1,32 @@
 package com.ecommerce_backend.dto;
 
 public class PlaceOrderRequestDTO {
+    private Long addressId;
+    private String paymentMethod;
+    private String couponCode;
 
-    private Long userId;
 
-    public Long getUserId() {
-        return userId;
+    public Long getAddressId() {
+        return addressId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setAddressId(Long addressId) {
+        this.addressId = addressId;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public String getCouponCode() {
+        return couponCode;
+    }
+
+    public void setCouponCode(String couponCode) {
+        this.couponCode = couponCode;
     }
 }
