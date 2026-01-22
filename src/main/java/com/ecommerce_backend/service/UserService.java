@@ -11,6 +11,10 @@ import com.ecommerce_backend.exception.ResourceNotFoundException;
 import com.ecommerce_backend.repository.UserRepository;
 import com.ecommerce_backend.security.JwtService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -110,18 +114,33 @@ public class UserService {
 
 
 
-    public List<UserResponseDTO> getAllUsers() {
+    public List<UserResponseDTO> getAllUsers(
+            int page,
+            int size,
+            String sortBy,
+            String direction
+    ) {
 
-        List<User> users = userRepository.findAll();
+        Sort sort =
+                direction.equalsIgnoreCase("desc")
+                        ? Sort.by(sortBy).descending()
+                        : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<User> userPage = userRepository.findAll(pageable);
+
         List<UserResponseDTO> response = new ArrayList<>();
 
-        for (User user : users) {
-            UserResponseDTO responseDTO = new UserResponseDTO();
-            BeanUtils.copyProperties(user, responseDTO);
-            response.add(responseDTO);
+        for (User user : userPage.getContent()) {
+            UserResponseDTO dto = new UserResponseDTO();
+            BeanUtils.copyProperties(user, dto);
+            response.add(dto);
         }
+
         return response;
     }
+
 
     public void deleteUser(Long id) {
 
@@ -151,7 +170,7 @@ public class UserService {
         UserResponseDTO response = new UserResponseDTO();
         response.setUsername(savedUser.getUsername());
         response.setEmail(savedUser.getEmail());
-        response.setRole(savedUser.getRole());  // ✅ CORRECT
+        response.setRole(savedUser.getRole());
 
 
         return response;

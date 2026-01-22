@@ -9,6 +9,10 @@ import com.ecommerce_backend.exception.ResourceNotFoundException;
 import com.ecommerce_backend.repository.CategoryRepository;
 import com.ecommerce_backend.repository.ProductRepository;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -67,8 +71,37 @@ public class ProductService {
         }
 
 
-        return response; // can be empty
+        return response;
     }
+
+    public List<ProductResponseDTO> getAllProducts(
+            int page,
+            int size,
+            String sortBy,
+            String direction
+    ) {
+
+        Sort sort =
+                direction.equalsIgnoreCase("desc")
+                        ? Sort.by(sortBy).descending()
+                        : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Product> productPage =
+                productRepository.findAll(pageable);
+
+        List<ProductResponseDTO> response = new ArrayList<>();
+
+        for (Product product : productPage.getContent()) {
+            ProductResponseDTO dto = new ProductResponseDTO();
+            BeanUtils.copyProperties(product, dto);
+            response.add(dto);
+        }
+
+        return response;
+    }
+
 
 
 

@@ -88,9 +88,15 @@ public class UserController {
     }
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/list")
-    public ResponseEntity<APIResponse<List<UserResponseDTO>>> getAllUsers() {
+    public ResponseEntity<APIResponse<List<UserResponseDTO>>> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ) {
 
-        List<UserResponseDTO> users = userService.getAllUsers();
+        List<UserResponseDTO> users =
+                userService.getAllUsers(page, size, sortBy, direction);
 
         APIResponse<List<UserResponseDTO>> response = new APIResponse<>();
         response.setSuccess(true);
@@ -99,6 +105,7 @@ public class UserController {
 
         return ResponseEntity.ok(response);
     }
+
 
 
     @PreAuthorize("hasRole('ADMIN')")

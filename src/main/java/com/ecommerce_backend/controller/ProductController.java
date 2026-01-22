@@ -59,5 +59,24 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/list")
+    public ResponseEntity<APIResponse<List<ProductResponseDTO>>> getAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ) {
+
+        List<ProductResponseDTO> products =
+                productService.getAllProducts(page, size, sortBy, direction);
+
+        APIResponse<List<ProductResponseDTO>> response = new APIResponse<>();
+        response.setSuccess(true);
+        response.setMessage("Products fetched successfully");
+        response.setData(products);
+
+        return ResponseEntity.ok(response);
+    }
+
 
 }
