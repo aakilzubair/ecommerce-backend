@@ -1,0 +1,34 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: ecommerce-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: aakil@87
+      MYSQL_DATABASE: ecommerce
+    ports:
+      - "3307:3306"   # 👈 host 3307, container 3306
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-paakil@87"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    container_name: ecommerce-app
+    build: .               # 👈 IMPORTANT (Dockerfile use hoga)
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "8087:8087"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/ecommerce
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: aakil@87
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+volumes:
+  mysql_data:
