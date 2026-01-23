@@ -1,67 +1,57 @@
 # 🛒 E-Commerce Backend Application (Spring Boot)
 
-A **secure and scalable e-commerce backend application** built using **Spring Boot**.  
-This project implements core e-commerce functionalities such as **User Management, Product Catalog, Cart, Orders**, along with **JWT-based authentication**, **role-based authorization**, **pagination**, and **sorting**.
+A **secure, scalable, and production-style e-commerce backend application** built using **Spring Boot**.  
+This project implements core e-commerce functionalities such as **User Management, Product Catalog, Cart, and Orders**, along with **JWT-based authentication**, **role-based authorization**, **pagination**, and **sorting**.
 
-Designed following **real-world backend best practices** and clean architecture.
+Designed following **real-world backend best practices**, clean architecture, and containerized using **Docker**.
 
 ---
 
 ## 🚀 Tech Stack
 
-- **Java 17+**
-- **Spring Boot**
-- **Spring Security**
-- **JWT (JSON Web Token)**
-- **Spring Data JPA (Hibernate)**
-- **MySQL**
-- **Maven**
-- **Postman (API Testing)**
+- Java 17+
+- Spring Boot
+- Spring Security
+- JWT (JSON Web Token)
+- Spring Data JPA (Hibernate)
+- MySQL
+- Maven
+- Docker & Docker Compose
+- Postman (API Testing)
 
 ---
 
 ## ✨ Features Implemented
 
 ### 👤 User Module
-- User registration
-- User login with JWT authentication
+- User registration & login
+- JWT authentication
 - Password encryption using BCrypt
-- Role-based access (`USER`, `ADMIN`)
+- Role-based access (USER / ADMIN)
 - Get user by ID
 - Get all users (Admin only)
 - Delete user (Admin only)
 
----
-
 ### 🗂 Category Module
-- Create category (Admin only)
-- Update category (Admin only)
-- Delete category (Admin only)
+- Create, update, delete category (Admin only)
 - Get category by ID
 - Get all categories
-
----
 
 ### 📦 Product Module
 - Add product (Admin only)
 - Get products by category
-- Pagination and sorting support
-
----
+- Pagination & sorting
 
 ### 🛒 Cart Module
-- Add product to cart (USER)
-- View cart items (USER)
-- Update cart item quantity (USER)
-- Remove cart item (USER)
-- Automatic cart creation
-- Automatic cart total calculation
-
----
+- Add product to cart
+- View cart items
+- Update cart item quantity
+- Remove cart item
+- Automatic cart creation & total calculation
 
 ### 📑 Order Module
-- Place order from cart (USER)
-- Create order items automatically
+- Place order from cart
+- Automatic order item creation
 - Clear cart after order placement
 - Order status management
 
@@ -77,35 +67,33 @@ Designed following **real-world backend best practices** and clean architecture.
 
 ---
 
-## 🔄 Authentication Flow (JWT)
+## 🔄 JWT Authentication Flow
 
-1. User registers → password stored using BCrypt
-2. User logs in using `/login`
-3. JWT token is generated on successful authentication
-4. Client sends token in request headers:
-   Authorization: Bearer <JWT_TOKEN>
+1. User registers → password stored using BCrypt  
+2. User logs in using `/login`  
+3. JWT token generated  
+4. Client sends token in header:
+
+Authorization: Bearer <JWT_TOKEN>
 
 yaml
 Copy code
-5. JWT filter validates token for secured APIs
-6. Role-based access is enforced
+
+5. JWT filter validates token  
+6. Role-based access enforced  
 
 ---
 
 ## 📄 Common API Response Format
 
-All APIs return a consistent response structure:
-
 ```json
 {
-"success": true,
-"message": "Operation successful",
-"data": {},
-"timestamp": null
+  "success": true,
+  "message": "Operation successful",
+  "data": {},
+  "timestamp": null
 }
 📊 Pagination & Sorting
-Implemented using Spring Data Pageable.
-
 Example:
 
 bash
@@ -115,47 +103,48 @@ Default page size: 10
 
 Supports sorting on multiple fields
 
-⚙️ Configuration
-application.properties
-properties
-Copy code
-spring.application.name=ecommerce_backend
-server.port=8087
+🐳 Docker Support
+Prerequisites
+Docker
 
-spring.datasource.url=jdbc:mysql://localhost:3306/ecommerce
-spring.datasource.username=root
-spring.datasource.password=your_password
+Docker Compose
 
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-▶️ How to Run the Project
-Clone the repository:
-
+▶️ Run Using Docker Compose
 bash
 Copy code
 git clone https://github.com/aakilzubair/ecommerce-backend.git
-Open the project in IntelliJ IDEA / VS Code
-
-Create MySQL database:
-
-sql
-Copy code
-CREATE DATABASE ecommerce;
-Update database credentials in application.properties
-
-Run the application:
-
-bash
-Copy code
-mvn spring-boot:run
-Application will run at:
+cd ecommerce-backend
+docker compose up
+Application runs at:
 
 arduino
 Copy code
 http://localhost:8087
+⚙️ Environment Configuration
+env
+Copy code
+SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/ecommerce
+SPRING_DATASOURCE_USERNAME=root
+SPRING_DATASOURCE_PASSWORD=root
 🧪 API Testing
 APIs tested using Postman
 
-JWT token required for secured endpoints
+JWT required for secured endpoints
 
-Supports role-based API testing
+Supports USER / ADMIN role testing
+
+🧠 Project Highlights
+Clean layered architecture (Controller → Service → Repository)
+
+Global exception handling
+
+Jakarta validation
+
+Pagination & sorting
+
+Dockerized multi-service setup
+
+👨‍💻 Author
+Aakil Zubair
+Backend Developer | Java | Spring Boot | Docker
+
