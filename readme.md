@@ -74,6 +74,58 @@ Designed following **real-world backend best practices**, clean architecture, an
 3. JWT token generated  
 4. Client sends token in header:
 
+## 📁 Project Structure
+
+src/main/java/com/ecommerce_backend
+│
+├── controller # REST controllers (API layer)
+│ ├── UserController
+│ ├── ProductController
+│ ├── CategoryController
+│ ├── CartController
+│ └── OrderController
+│
+├── service # Business logic layer
+│ ├── UserService
+│ ├── ProductService
+│ ├── CategoryService
+│ ├── CartService
+│ └── OrderService
+│
+├── repository # Data access layer (JPA Repositories)
+│ ├── UserRepository
+│ ├── ProductRepository
+│ ├── CategoryRepository
+│ ├── CartRepository
+│ └── OrderRepository
+│
+├── entity # JPA entities
+│ ├── User
+│ ├── Role
+│ ├── Product
+│ ├── Category
+│ ├── Cart
+│ └── Order
+│
+├── dto # Request & Response DTOs
+│ ├── LoginRequestDTO
+│ ├── LoginResponseDTO
+│ ├── UserRequestDTO
+│ ├── ProductRequestDTO
+│ └── OrderResponseDTO
+│
+├── security # Spring Security & JWT
+│ ├── JwtFilter
+│ ├── JwtService
+│ ├── SecurityConfig
+│ └── PasswordConfig
+│
+├── exception # Global exception handling
+│ ├── GlobalExceptionHandler
+│ └── ResourceNotFoundException
+│
+└── EcommerceBackendApplication.java
+
 Authorization: Bearer <JWT_TOKEN>
 
 yaml
@@ -143,6 +195,10 @@ Jakarta validation
 Pagination & sorting
 
 Dockerized multi-service setup
+
+
+
+
 
 👨‍💻 Author
 Aakil Zubair
