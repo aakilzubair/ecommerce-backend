@@ -30,7 +30,7 @@ public class CartController {
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
 
-        String email = authentication.getName(); // JWT subject
+        String email = authentication.getName();
 
         CartResponseDTO cartResponse =
                 cartService.addToCart(email, cartRequestDTO);
@@ -62,7 +62,7 @@ public class CartController {
         return ResponseEntity.ok(response);
     }
 
-    // 1️⃣ UPDATE QUANTITY
+
     @PutMapping("/update-quantity")
     public ResponseEntity<APIResponse<Void>> updateQuantity(
             @RequestBody CartItemVIewRequestDTO requestDTO) {

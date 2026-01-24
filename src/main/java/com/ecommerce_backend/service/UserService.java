@@ -70,26 +70,18 @@ public class UserService {
 
 
    public LoginResponseDTO loginUser(LoginRequestDTO dto) {
-
        authenticationManager.authenticate(
                new UsernamePasswordAuthenticationToken(
                        dto.getEmail(),
                        dto.getPassword()
                )
        );
-
-
        User user = userRepository.findByEmail(dto.getEmail())
                .orElseThrow(() -> new RuntimeException("User not found"));
-
-
        String token = jwtService.generateToken(
                user.getEmail(),
                user.getRole().name()
        );
-
-
-
        LoginResponseDTO response = new LoginResponseDTO();
        response.setId(user.getId());
        response.setUsername(user.getUsername());

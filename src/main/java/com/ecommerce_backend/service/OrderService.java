@@ -38,12 +38,12 @@ public class OrderService {
             PlaceOrderRequestDTO dto
     ) {
 
-        // 1️⃣ User by EMAIL (JWT)
+
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("User not found"));
 
-        // 2️⃣ Cart by user
+
         Cart cart = cartRepository.findByUserId(user.getId())
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Cart not found"));
@@ -55,23 +55,18 @@ public class OrderService {
             throw new RuntimeException("Cart is empty");
         }
 
-        // 3️⃣ Create Order
+
         Order order = new Order();
         order.setUser(user);
         order.setTotalAmount(cart.getTotalPrice());
         order.setStatus(OrderStatus.CREATED);
         order.setCreatedAt(LocalDateTime.now());
 
-        // 🔮 Future use
-//        if (dto != null) {
-//            order.setPaymentMethod(dto.getPaymentMethod());
-//            order.setCouponCode(dto.getCouponCode());
-//            // addressId → later
-//        }
+
 
         Order savedOrder = orderRepository.save(order);
 
-        // 4️⃣ Order Items
+
         for (CartItem item : cartItems) {
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(savedOrder);
@@ -81,12 +76,12 @@ public class OrderService {
             orderItemRepository.save(orderItem);
         }
 
-        // 5️⃣ Clear cart
+
         cartItemRepository.deleteAll(cartItems);
         cart.setTotalPrice(0.0);
         cartRepository.save(cart);
 
-        // 6️⃣ Response
+
         OrderResponseDTO response = new OrderResponseDTO();
         response.setOrderId(savedOrder.getId());
         response.setTotalAmount(savedOrder.getTotalAmount());

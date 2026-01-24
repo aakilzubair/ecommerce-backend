@@ -43,7 +43,7 @@ public class CartService {
         Product product = productRepository.findById(dto.getProductId())
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
-        // 1️⃣ Find or create cart
+
         Cart cart = cartRepository.findByUserId(user.getId())
                 .orElseGet(() -> {
                     Cart c = new Cart();
@@ -52,7 +52,7 @@ public class CartService {
                     return cartRepository.save(c);
                 });
 
-        // 2️⃣ Find or create cart item
+
         CartItem item = cartItemRepository
                 .findByCartIdAndProductId(cart.getId(), product.getId())
                 .orElseGet(() -> {
@@ -64,13 +64,13 @@ public class CartService {
                     return ci;
                 });
 
-        // 3️⃣ Update quantity & price
+
         int updatedQty = item.getQuantity() + dto.getQuantity();
         item.setQuantity(updatedQty);
         item.setPrice(product.getPrice() * updatedQty);
         cartItemRepository.save(item);
 
-        // 4️⃣ Update cart total
+
         double total = cartItemRepository.findByCartId(cart.getId())
                 .stream()
                 .mapToDouble(CartItem::getPrice)
@@ -79,7 +79,7 @@ public class CartService {
         cart.setTotalPrice(total);
         cartRepository.save(cart);
 
-        // 5️⃣ Response
+
         CartResponseDTO response = new CartResponseDTO();
         response.setCartId(cart.getId());
         response.setTotalPrice(cart.getTotalPrice());
@@ -93,16 +93,15 @@ public class CartService {
 
     public List<CartItemViewResponseDTO> viewCart(CartItemVIewRequestDTO requestDTO) {
 
-        // 1. Find cart by userId
+
         Cart cart = cartRepository.findByUserId(requestDTO.getUserId())
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Cart not found"));
 
-        // 2. Fetch cart items
+
         List<CartItem> cartItems =
                 cartItemRepository.findByCartId(cart.getId());
 
-        // 3. Map to response DTO
         List<CartItemViewResponseDTO> responseList = new ArrayList<>();
 
         for (CartItem item : cartItems) {

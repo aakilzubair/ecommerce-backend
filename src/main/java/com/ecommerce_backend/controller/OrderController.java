@@ -33,7 +33,7 @@ public class OrderController {
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
 
-        String email = authentication.getName(); // ✅ JWT subject
+        String email = authentication.getName();
 
         OrderResponseDTO order =
                 orderService.placeOrder(email, requestDTO);
